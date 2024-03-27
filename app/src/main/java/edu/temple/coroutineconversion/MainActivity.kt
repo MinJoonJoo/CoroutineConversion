@@ -6,13 +6,16 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Button
 import android.widget.ImageView
-
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
-    //TODO (Refactor to replace Thread code with coroutines)
-
     lateinit var cakeImageView: ImageView
-
+    var scope =CoroutineScope(Job()+ Dispatchers.Default)
     val handler = Handler(Looper.getMainLooper(), Handler.Callback {
         cakeImageView.alpha = it.what / 100f
         true
@@ -25,12 +28,17 @@ class MainActivity : AppCompatActivity() {
         cakeImageView = findViewById(R.id.imageView)
 
         findViewById<Button>(R.id.revealButton).setOnClickListener{
-            Thread{
-                repeat(100) {
-                    handler.sendEmptyMessage(it)
-                    Thread.sleep(40)
-                }
-            }.start()
+            scope.cancel()
+            scope = CoroutineScope(Job() + Dispatchers.Default)
+            scope.launch{
+                countdown()
+            }
+        }
+
+    }suspend fun countdown(){
+        repeat(100) {
+            handler.sendEmptyMessage(it)
+            delay(20)
         }
     }
 }
