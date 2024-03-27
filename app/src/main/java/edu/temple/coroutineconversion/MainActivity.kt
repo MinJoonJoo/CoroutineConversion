@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         cakeImageView = findViewById(R.id.imageView)
 
         findViewById<Button>(R.id.revealButton).setOnClickListener{
-            CoroutineScope(Job()+ Dispatchers.Default).launch{
+            CoroutineScope(Job()+ Dispatchers.Main).launch{
                 repeat(100) {
                     cakeImageView.alpha = it / 100f
                     delay(20)
